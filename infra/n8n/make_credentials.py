@@ -60,7 +60,7 @@ def build_credentials(env: dict[str, str]) -> list[dict]:
                   "data": {"user": env.get("WAZUH_API_USER", "wazuh-wui"), "password": need(env, "WAZUH_API_PASSWORD")}})
     key_file = Path(need(env, "PF_SSH_PRIVATE_KEY_FILE"))
     creds.append({"name": PF_SSH, "type": "sshPrivateKey",
-                  "data": {"host": env.get("PF_SSH_HOST", "10.250.0.1"), "port": 22, "username": "haedam-pf",
+                  "data": {"host": env.get("PF_SSH_HOST", "10.250.0.1"), "port": 22, "username": env.get("PF_SSH_USER", "admin"),
                            "privateKey": key_file.read_text(encoding="utf-8"), "passphrase": ""}})
     for c in creds:
         c["id"] = cred_id(c["name"])
