@@ -1,0 +1,24 @@
+# 해담 SOAR n8n (D 자리 구성). 원본: 팀 저장소 infra/n8n (김대훈)
+# - 팀 원본은 수업 때 만든 외부 볼륨(external)을 썼다. 새 PC에는 그 볼륨이 없으므로 일반 볼륨으로 바꿨다(1인 재구성).
+#   워크플로·자격 증명은 infra/n8n/workflows와 반입 스크립트로 다시 넣는다.
+# - 게시 주소는 BIND_IP로 정한다. 기본 127.0.0.1. 팀 VPN(team-d) 연결 뒤 그 주소로만 바꾼다.
+# - 버전은 고정한다. 올릴 때는 볼륨을 백업하고 이 파일의 태그를 PR로 바꾼다.
+name: n8n
+
+services:
+  n8n:
+    image: n8nio/n8n:2.39.5
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "${BIND_IP:-127.0.0.1}:5678:5678"
+    mem_limit: 768m
+    environment:
+      - WEBHOOK_URL=http://${BIND_IP:-127.0.0.1}:5678/
+      - GENERIC_TIMEZONE=Asia/Seoul
+      - TZ=Asia/Seoul
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
