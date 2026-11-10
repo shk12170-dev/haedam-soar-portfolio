@@ -1,0 +1,93 @@
+{
+  "title": "S7 홈페이지 변조 (file_key)",
+  "description": "C S7. 10분 안 같은 asset_id·file_key에 FIM 변경·생성(fim-change)과 웹 접근 2xx(web-access-2xx)가 모두 있음. 기준: lab/s7/graylog/s7-rule-spec.md 4절(김상혁). 1인 재구성에서 명세를 정의 JSON으로 옮김.",
+  "priority": 3,
+  "alert": true,
+  "config": {
+    "type": "aggregation-v1",
+    "query": "_exists_:signal_kind AND asset_id:haedam-portal",
+    "query_parameters": [],
+    "filters": [],
+    "streams": [
+      "REPLACE_wazuh-alerts_stream_id",
+      "REPLACE_haedam-portal_stream_id"
+    ],
+    "group_by": [
+      "asset_id",
+      "file_key"
+    ],
+    "series": [
+      {
+        "id": "card(signal_kind)",
+        "type": "card",
+        "field": "signal_kind"
+      }
+    ],
+    "conditions": {
+      "expression": {
+        "expr": ">",
+        "left": {
+          "expr": "number-ref",
+          "ref": "card(signal_kind)"
+        },
+        "right": {
+          "expr": "number",
+          "value": 1
+        }
+      }
+    },
+    "search_within_ms": 600000,
+    "execute_every_ms": 60000,
+    "use_cron_scheduling": false,
+    "event_limit": 100
+  },
+  "field_spec": {
+    "asset_id": {
+      "data_type": "string",
+      "providers": [
+        {
+          "type": "template-v1",
+          "template": "${source.asset_id}",
+          "require_values": true
+        }
+      ]
+    },
+    "file_key": {
+      "data_type": "string",
+      "providers": [
+        {
+          "type": "template-v1",
+          "template": "${source.file_key}",
+          "require_values": true
+        }
+      ]
+    },
+    "case_id": {
+      "data_type": "string",
+      "providers": [
+        {
+          "type": "template-v1",
+          "template": "S7",
+          "require_values": true
+        }
+      ]
+    }
+  },
+  "key_spec": [
+    "asset_id",
+    "file_key"
+  ],
+  "notification_settings": {
+    "grace_period_ms": 600000,
+    "backlog_size": 20
+  },
+  "notifications": [],
+  "storage": [
+    {
+      "type": "persist-to-streams-v1",
+      "streams": [
+        "000000000000000000000002"
+      ]
+    }
+  ]
+}

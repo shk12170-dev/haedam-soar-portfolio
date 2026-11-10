@@ -72,6 +72,7 @@ NOTIFICATIONS = [
     ("n8n haedam-s4 (S4 → haedam-31)", "infra/graylog/notifications/s1-n8n-haedam-s1.json", "haedam-s4"),
     ("n8n haedam-s8-s10 (S8·S10 → haedam-32)", "lab/s8s10/graylog/s8-s10-n8n-notification.json", None),
     ("n8n haedam-s12 (S12 → haedam-20)", "infra/graylog/notifications/s12-n8n-haedam-s12.json", None),
+    ("n8n haedam-s7 (S7 → haedam-33)", "lab/s7/graylog/s7-n8n-notification.json", None),
 ]
 
 # ── 이벤트 정의: (원본 JSON, 붙일 알림 제목) ────────────────────────────────────
@@ -81,6 +82,7 @@ EVENTS = [
     ("lab/s8s10/graylog/s8-scan-then-login.json", "n8n haedam-s8-s10 (S8·S10 → haedam-32)"),
     ("lab/s8s10/graylog/s10-three-layer.json", "n8n haedam-s8-s10 (S8·S10 → haedam-32)"),
     ("lab/s12/graylog/s12-request-flood.json", "n8n haedam-s12 (S12 → haedam-20)"),
+    ("lab/s7/graylog/s7-tamper-file-key.json", "n8n haedam-s7 (S7 → haedam-33)"),
 ]
 
 LOOKUP = {

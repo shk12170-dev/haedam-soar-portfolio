@@ -48,3 +48,13 @@
 ## 반입하지 않은 것
 
 팀 협업용 자료(`.claude/`, `.codex/`, `.agents/`, `prompts/`, `orchestration/`, `work-log/`, `team_docs/`, 회의·논의 문서), 로컬 산출물(`.venv` 등), n8n 워크플로 생성기 체인(`tools/gen_n8n_*.py`, 생성된 JSON을 원본으로 사용), Suricata 관련 실행 구성.
+
+## 외부 원본
+
+| 이 저장소 경로 | 원본 | 라이선스 | 바꾼 점 |
+| --- | --- | --- | --- |
+| `infra/wazuh/` | [wazuh/wazuh-docker](https://github.com/wazuh/wazuh-docker) v4.9.0 `single-node` (commit `cb63566`) | GPLv2 | 포트 게시 주소, 메모리 상한, 514/udp·9200 비게시, S7 syslog_output, 중계기 서비스 추가 |
+
+## 1인 재구성에서 새로 만든 것 (김상혁)
+
+`infra/graylog/bootstrap.py`, `infra/n8n/make_credentials.py`, `infra/pfsense/{configure_lab.php,export_client.php}`, `infra/vm/make_vm.py`, `infra/portal-vm/install_portal.sh`, `infra/db-vm/install_db.sh`, `tools/secret_scan.py`, `tools/windows/allow-lab-firewall.ps1`, `lab/s7/graylog/{s7-tamper-file-key.json,s7-n8n-notification.json}`(팀 명세 `s7-rule-spec.md`를 정의 JSON으로 옮김), `tests/test_*.py`, `README.md`, `docs/journal/`.

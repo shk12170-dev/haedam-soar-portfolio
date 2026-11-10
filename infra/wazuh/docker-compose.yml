@@ -105,6 +105,20 @@ services:
       - wazuh.indexer:wazuh.indexer
       - wazuh.manager:wazuh.manager
 
+  # S7 경보 중계(팀 C 원본 lab/s7/relay/wazuh-udp-to-tcp.js). Wazuh csyslogd는 UDP만 보내므로 TCP로 바꿔 D Graylog에 넘긴다.
+  wazuh-relay:
+    image: node:22-alpine
+    hostname: wazuh-relay
+    restart: always
+    mem_limit: 96m
+    environment:
+      - TARGET_HOST=${RELAY_TARGET_HOST:-10.250.0.100}
+      - TARGET_PORT=5514
+      - LISTEN_PORT=5514
+    volumes:
+      - ../../lab/s7/relay/wazuh-udp-to-tcp.js:/relay.js:ro
+    command: ["node", "/relay.js"]
+
 volumes:
   wazuh_api_configuration:
   wazuh_etc:

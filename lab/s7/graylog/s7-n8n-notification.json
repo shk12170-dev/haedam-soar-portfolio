@@ -1,0 +1,18 @@
+{
+  "title": "n8n haedam-s7 (S7 → haedam-33)",
+  "description": "S7 이벤트를 n8n haedam-33 웹훅으로 보낸다. haedam-33 필수 필드: event_id·asset_id·file_key(1인 재구성에서 작성)",
+  "config": {
+    "type": "http-notification-v2",
+    "url": "http://host.docker.internal:5678/webhook/haedam-s7",
+    "method": "POST",
+    "content_type": "JSON",
+    "time_zone": "UTC",
+    "headers": "",
+    "basic_auth": null,
+    "api_key_as_header": false,
+    "api_key": "",
+    "api_secret": null,
+    "skip_tls_verification": false,
+    "body_template": "{\"event_id\":\"${event.id}\",\"asset_id\":\"${event.fields.asset_id}\",\"file_key\":\"${event.fields.file_key}\",\"case_id\":\"S7\",\"condition_met_at\":\"${event.timestamp}\",\"detected_at\":\"${event.timestamp_processing}\",\"event_definition_id\":\"${event_definition_id}\"}"
+  }
+}

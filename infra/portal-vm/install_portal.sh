@@ -14,6 +14,10 @@ id portal >/dev/null 2>&1 || useradd --system --home "$APP" --shell /usr/sbin/no
 mkdir -p "$APP"
 rm -rf "$APP/backend" "$APP/dist"
 tar -xzf /tmp/portal.tgz -C "$APP"
+# 웹 루트는 팀 A VM과 같은 경로에 둔다(S7 FIM·탐지 규칙·복원 스크립트가 이 경로를 전제로 함)
+WEB=/home/haedam/haedam-portal-frontend/dist
+mkdir -p "$(dirname "$WEB")" && rm -rf "$WEB" && mv "$APP/dist" "$WEB"
+chmod o+x /home/haedam /home/haedam/haedam-portal-frontend && chmod -R o+rX "$WEB"
 mkdir -p "$APP/backend/instance"
 chown -R portal:portal "$APP"
 
