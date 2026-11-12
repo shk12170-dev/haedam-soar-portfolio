@@ -1,4 +1,4 @@
-# 실습망 → 이 PC(팀 C·D 자리)로 들어오는 연결을 허용한다. 관리자 PowerShell에서 사용자가 직접 실행한다.
+﻿# 실습망 → 이 PC(팀 C·D 자리)로 들어오는 연결을 허용한다. 관리자 PowerShell에서 사용자가 직접 실행한다.
 # 팀 4대 분산에서는 C·D가 각자 PC의 Windows 방화벽을 열었다(team_docs/2026-10-23-D-VPN-질문-답변-B.md "D Windows 방화벽").
 # 한 PC 재구성에서는 OpenVPN 어댑터 두 개(10.250.0.3 = C, 10.250.0.100 = D)가 "공용 네트워크"로 잡혀
 # pfSense·포털 VM에서 오는 syslog·GELF·Wazuh·API 연결이 모두 막힌다.
