@@ -59,7 +59,10 @@ config_set_path("syslog/remoteserver", "$D:514");
 config_set_path("syslog/filter", true);
 config_set_path("syslog/ipproto", "ipv4");
 config_set_path("syslog/logfilter", true);
-out("remote syslog $D:514");
+/* syslog BSD 형식에는 시간대가 없어 Graylog(Asia/Seoul)가 KST로 읽는다. pfSense도 KST여야
+ * filterlog 시각이 9시간 밀리지 않는다(밀리면 이벤트 정의의 최근 N분 검색에 안 잡힘). */
+config_set_path("system/timezone", "Asia/Seoul");
+out("remote syslog $D:514, timezone Asia/Seoul");
 
 /* 4. OpenVPN: CA·서버 인증서·클라이언트 인증서(team-a/c/d) */
 function find_by_descr($path, $descr) {
@@ -159,6 +162,9 @@ out("openvpn rules " . count($wanted));
 write_config("haedam lab configure");
 interface_configure("opt1"); interface_configure("opt2");
 openvpn_resync_all();
+system_timezone_configure();
 system_syslogd_start();
+/* filterlog는 시작할 때의 시간대를 계속 쓰므로 다시 띄운다 */
+mwexec("/usr/bin/pkill -x filterlog; /usr/local/sbin/filterlog -i pflog0 -p /var/run/filterlog.pid");
 mwexec("/etc/rc.filter_configure_sync");
 out("applied");
