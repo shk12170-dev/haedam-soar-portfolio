@@ -106,6 +106,17 @@ sparseVhd=true
 8. **n8n 반입** — `python infra/n8n/make_credentials.py --out <임시>` → 컨테이너에 복사 → `n8n import:credentials`, `n8n import:workflow --separate` → 임시 폴더의 자격 증명 파일 삭제.
 9. **Wazuh agent** — 포털 VM에 4.9.0 설치, 매니저 10.250.0.3, `/opt/haedam-portal/dist` 실시간 FIM.
 
+## 매번 켤 때 순서 (중요)
+
+Graylog(D)·티켓 저장소·Wazuh(C)는 팀처럼 **VPN 주소(10.250.0.100 / 10.250.0.3)에 포트를 엽니다.** VPN이 연결되기 전에 Docker가 뜨면 `bind: cannot assign requested address`로 이 컨테이너들이 멈춥니다(Docker Desktop 로그 `the specified IP ... is not owned by the host`).
+
+1. pfSense VM 켜기 → 콘솔/SSH로 시각 확인(필요하면 `date -u`로 맞춤)
+2. OpenVPN 서비스 시작 → `10.250.0.100`·`10.250.0.3`이 붙었는지 확인(`Get-NetIPAddress`)
+3. Docker Desktop → 멈춘 컨테이너 시작(`docker start soc-graylog ticket-store haedam-wazuh-wazuh.manager-1 haedam-wazuh-wazuh.dashboard-1`)
+4. DB VM → 포털 VM 순서로 켜기 → 포털 `health` 확인
+
+끌 때는 반대 순서(포털·DB → Docker → OpenVPN → pfSense)입니다.
+
 ## 구성별 확인
 
 | 구성 | 실행 | 접속 | 기본 설정 |

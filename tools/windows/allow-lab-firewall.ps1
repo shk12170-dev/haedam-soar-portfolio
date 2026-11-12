@@ -20,4 +20,11 @@ foreach ($r in $rules) {
 }
 New-NetFirewallRule -Group $group -DisplayName "haedam-lab ICMP echo" -Direction Inbound -Action Allow `
   -Protocol ICMPv4 -IcmpType 8 -LocalAddress @("10.250.0.3", "10.250.0.100") -RemoteAddress $remote -Profile Any | Out-Null
+# Docker Desktop 첫 실행 때 생긴 "Docker Desktop Backend" 공용(Public) 차단 규칙은 위 허용보다 우선한다(차단 > 허용).
+# 공용 프로필의 기본 동작이 "들어오는 연결 차단"이므로, 이 차단 규칙을 꺼도 열리는 것은 위 실습망 허용뿐이다.
+# 되돌리기: Get-NetFirewallRule -DisplayName "Docker Desktop Backend" | ? Action -eq Block | Enable-NetFirewallRule
+$dockerBlock = Get-NetFirewallApplicationFilter | Where-Object Program -match 'com\.docker\.backend\.exe$' |
+  Get-NetFirewallRule | Where-Object { $_.Action -eq 'Block' -and $_.Direction -eq 'Inbound' }
+$dockerBlock | Disable-NetFirewallRule
+"Docker Desktop Backend 차단 규칙 끔: $(@($dockerBlock).Count)개"
 Get-NetFirewallRule -Group $group | Select-Object DisplayName, Enabled | Format-Table -AutoSize
