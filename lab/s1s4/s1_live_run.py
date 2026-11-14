@@ -23,7 +23,7 @@ from datetime import datetime, timedelta, timezone
 from http.cookies import SimpleCookie
 from pathlib import Path
 
-HOST, PORT = "10.250.0.2", 5000
+HOST, PORT = "203.0.113.1", 80  # pfSense WAN, NAT WAN:80 -> portal 10.250.0.2:5000
 SOURCE = "203.0.113.11"
 ATTEMPTS = 9
 INTERVAL = 60
