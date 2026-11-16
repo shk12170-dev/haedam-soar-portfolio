@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>해담시청 SOAR · 보안 관제·자동 대응 포트폴리오</title>
+<meta name="description" content="공공기관 민원포털 대상 공격 탐지 → 자동 대응 → 복구를 PC 한 대에 재구성해 S1·S4·S7·S8·S10·S12 6개 케이스를 실측한 개인 포트폴리오." />
+<style>
+  :root{
+    --bg:#0b0f17; --panel:#121825; --panel2:#0e141f; --line:#1e2838;
+    --ink:#e7edf5; --muted:#8a99ad; --dim:#5f6f84;
+    --accent:#4fd1c5; --accent2:#5b9dff; --ok:#3fcf8e; --warn:#f0b84c; --bad:#ff6b6b;
+    --mono:'SF Mono',ui-monospace,'Cascadia Code','JetBrains Mono',Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    background-image:radial-gradient(900px 500px at 80% -10%,rgba(79,209,197,.08),transparent),radial-gradient(700px 400px at -10% 10%,rgba(91,157,255,.07),transparent);}
+  a{color:var(--accent2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  .mono{font-family:var(--mono)}
+  .tag{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--accent);
+    border:1px solid var(--line);border-radius:999px;padding:3px 10px;background:var(--panel)}
+  header.hero{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:12px;color:var(--muted);font-family:var(--mono);font-size:13px;letter-spacing:.08em}
+  .logo{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:grid;place-items:center;color:#06121a;font-weight:800}
+  h1{font-size:clamp(28px,5vw,46px);line-height:1.15;margin:22px 0 10px;letter-spacing:-.01em}
+  h1 .accent{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{color:var(--muted);font-size:clamp(15px,2.2vw,18px);max-width:720px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);
+    color:var(--ink);padding:10px 16px;border-radius:9px;font-size:14px;font-weight:600}
+  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#06121a;border-color:transparent}
+  .btn:hover{text-decoration:none;border-color:var(--accent)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;margin:34px 0 0}
+  .stat{background:var(--panel);padding:18px 16px}
+  .stat b{display:block;font-size:26px;font-family:var(--mono);color:var(--ink)}
+  .stat span{color:var(--dim);font-size:12.5px}
+  section{padding:48px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:22px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+  h2 .n{font-family:var(--mono);font-size:13px;color:var(--accent)}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:14.5px}
+  .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .flow b{color:var(--ink)}
+  .flow .arrow{color:var(--accent)}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h3{margin:0 0 4px;font-size:16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .card .cid{font-family:var(--mono);font-size:12px;color:var(--accent)}
+  .card p{margin:8px 0 0;color:var(--muted);font-size:13.5px}
+  .pill{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line)}
+  .pill.ok{color:var(--ok);border-color:rgba(63,207,142,.35)}
+  .pill.warn{color:var(--warn);border-color:rgba(240,184,76,.35)}
+  .kv{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .kv span{font-family:var(--mono);font-size:11.5px;color:var(--dim);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+  th,td{text-align:left;padding:10px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--dim);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+  td.mono,.mono td{font-family:var(--mono)}
+  .stack{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-family:var(--mono);font-size:12.5px;color:var(--ink);background:var(--panel);border:1px solid var(--line);
+    border-radius:8px;padding:6px 11px}
+  .note{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:8px;
+    padding:14px 16px;color:var(--muted);font-size:13.5px}
+  figure{margin:0}
+  svg{max-width:100%;height:auto;display:block}
+  footer{padding:36px 0 60px;color:var(--dim);font-size:13px}
+  .foot-grid{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+  @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><div class="logo">H</div> HAEDAM · SECURITY OPERATIONS</div>
+    <h1>공격 탐지 → <span class="accent">자동 대응</span> → 복구를<br/>PC 한 대에서 끝까지 실측</h1>
+    <p class="lede">가상 공공기관 <b>해담시청</b> 민원포털을 대상으로, 4인 팀 캡스톤을 혼자서 PC 한 대에 팀과 같은 주소·VPN 구조로 재구성했습니다. pfSense·Wazuh·Graylog·n8n·Flask·React를 연동해 <b>6개 공격 시나리오</b>를 공격 입력부터 자동 차단·복구까지 실제로 돌렸습니다.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/shk12170-dev/haedam-soar-portfolio" target="_blank" rel="noopener">GitHub 저장소 →</a>
+      <a class="btn" href="#cases">6개 케이스 보기</a>
+      <a class="btn" href="#results">실측 결과</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>6 / 6</b><span>케이스 탐지→대응 동작</span></div>
+      <div class="stat"><b>5</b><span>인시던트 티켓 자동 생성</span></div>
+      <div class="stat"><b>49s</b><span>S1 탐지→자동 차단</span></div>
+      <div class="stat"><b>1 PC</b><span>팀 4대 구성 재현</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="arch">
+  <div class="wrap">
+    <h2><span class="n">01</span> 시스템 구성</h2>
+    <p class="sub">팀은 PC 4대를 OpenVPN(10.250.0.0/24)으로 묶었습니다. 이 포트폴리오는 같은 주소·같은 VPN 구조를 한 PC의 VM과 Docker로 재현합니다.</p>
+    <figure>
+    <svg viewBox="0 0 900 300" role="img" aria-label="해담시청 SOAR 데이터 흐름도">
+      <defs>
+        <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#4fd1c5"/></marker>
+        <style>
+          .box{fill:#121825;stroke:#1e2838;rx:10}
+          .t{fill:#e7edf5;font:600 13px var(--mono,monospace)}
+          .s{fill:#8a99ad;font:11px monospace}
+          .e{stroke:#4fd1c5;stroke-width:1.6;fill:none;marker-end:url(#ar)}
+          .lbl{fill:#5f6f84;font:10px monospace}
+        </style>
+      </defs>
+      <rect class="box" x="20" y="120" width="150" height="62" rx="10"/>
+      <text class="t" x="34" y="146">Kali 공격</text><text class="s" x="34" y="164">203.0.113.0/24</text>
+      <rect class="box" x="220" y="120" width="160" height="62" rx="10"/>
+      <text class="t" x="234" y="146">pfSense · Suricata</text><text class="s" x="234" y="164">방화벽 · 경계 차단</text>
+      <rect class="box" x="430" y="20" width="160" height="62" rx="10"/>
+      <text class="t" x="444" y="46">민원포털 (A)</text><text class="s" x="444" y="64">Flask·React·MySQL</text>
+      <rect class="box" x="430" y="120" width="160" height="62" rx="10"/>
+      <text class="t" x="444" y="146">Graylog SIEM</text><text class="s" x="444" y="164">수집·상관·이벤트</text>
+      <rect class="box" x="430" y="218" width="160" height="62" rx="10"/>
+      <text class="t" x="444" y="244">Wazuh HIDS</text><text class="s" x="444" y="262">FIM·파일 복구</text>
+      <rect class="box" x="650" y="120" width="160" height="62" rx="10"/>
+      <text class="t" x="664" y="146">n8n SOAR</text><text class="s" x="664" y="164">자동 대응 봇</text>
+      <rect class="box" x="650" y="218" width="160" height="62" rx="10"/>
+      <text class="t" x="664" y="244">티켓·대시보드</text><text class="s" x="664" y="262">인시던트 기록</text>
+      <line class="e" x1="170" y1="151" x2="218" y2="151"/>
+      <line class="e" x1="380" y1="140" x2="428" y2="60"/>
+      <line class="e" x1="380" y1="151" x2="428" y2="151"/>
+      <line class="e" x1="380" y1="162" x2="428" y2="245"/>
+      <path class="e" d="M590,51 C620,51 620,140 648,148"/>
+      <path class="e" d="M590,245 C615,245 620,160 648,158"/>
+      <line class="e" x1="590" y1="151" x2="648" y2="151"/>
+      <path class="e" d="M730,182 L730,216"/>
+      <path class="e" d="M650,250 C610,250 600,70 592,60" stroke-dasharray="4 3"/>
+      <text class="lbl" x="600" y="40">대응: 차단·잠금·복구</text>
+    </svg>
+    </figure>
+    <div class="flow" style="margin-top:14px">
+      <b>공격</b><span class="arrow">→</span> pfSense <span class="arrow">→</span> 포털/Wazuh/Suricata 로그 <span class="arrow">→</span> <b>Graylog 탐지</b> <span class="arrow">→</span> n8n <span class="arrow">→</span> <b>자동 대응</b> <span class="arrow">→</span> 효과 확인 <span class="arrow">→</span> 티켓·원복
+    </div>
+  </div>
+</section>
+
+<section id="cases">
+  <div class="wrap">
+    <h2><span class="n">02</span> 6개 공격 시나리오</h2>
+    <p class="sub">각 케이스를 공격 입력 → 탐지 → 자동 대응 → 효과 확인 → 원복까지 이 PC에서 실제로 돌리고 인시던트 티켓으로 남겼습니다. (티켓 T-20261116-0001~0005)</p>
+    <div class="grid">
+      <div class="card">
+        <h3>S1 · 로그인 무차별 대입 <span class="cid">기밀성</span></h3>
+        <div class="kv"><span>탐지 Graylog</span><span>대응 앱 IP 차단</span></div>
+        <p>한 출발지에서 로그인 실패 9회 → Graylog가 탐지하고 n8n이 출발지를 자동 차단. 공격 IP 403, 정상 사용자 200, 해제 후 재접근 200.</p>
+        <div class="kv"><span>MTTD 49s</span><span>오차단 0</span><span class="pill ok">T-0001 종료</span></div>
+      </div>
+      <div class="card">
+        <h3>S4 · 실패 뒤 성공(계정 탈취) <span class="cid">기밀성</span></h3>
+        <div class="kv"><span>탐지 Graylog</span><span>대응 계정 잠금</span></div>
+        <p>실패 5회 뒤 로그인 성공 → 계정 자동 잠금 + 기존 세션 회수. 탈취 세션 무효화, 정상 계정 영향 0, 비밀번호 재설정으로 원복.</p>
+        <div class="kv"><span>세션 회수</span><span class="pill ok">T-0002 종료</span></div>
+      </div>
+      <div class="card">
+        <h3>S8 · 스캔 → 로그인 시도 <span class="cid">NIDS</span></h3>
+        <div class="kv"><span>탐지 다계층</span><span>대응 앱 차단</span></div>
+        <p>포털 스캔(404) + 로그인 실패를 같은 출발지로 묶어 탐지 → 앱 IP 차단. 공격 403, 정상 200, 해제로 원복.</p>
+        <div class="kv"><span class="pill ok">T-0003 종료</span></div>
+      </div>
+      <div class="card">
+        <h3>S10 · 3계층 침입 연쇄 <span class="cid">NIDS</span></h3>
+        <div class="kv"><span>탐지 3계층 상관</span><span>대응 앱+경계</span></div>
+        <p>스캔·로그인·방화벽 차단 로그를 묶어 탐지 → 앱 IP 차단 + pfSense 경계 차단(SSH 강제 명령) → 경계·앱 순차 해제.</p>
+        <div class="kv"><span>앱+PF</span><span class="pill warn">PF HTTP 드롭 한계</span><span class="pill ok">T-0004 종료</span></div>
+      </div>
+      <div class="card">
+        <h3>S7 · 홈페이지 변조 <span class="cid">무결성</span></h3>
+        <div class="kv"><span>탐지 FIM+웹 상관</span><span>대응 Wazuh AR</span></div>
+        <p>웹 파일 변조·생성을 Wazuh FIM이 실시간 탐지 → active response가 <b>변조 파일은 원본 해시로 복구</b>, <b>새 파일은 격리</b>. 팀이 못 끝낸 자동 복구를 설치·검증.</p>
+        <div class="kv"><span>해시 원복</span><span>verify ok</span><span class="pill ok">T-0005 복구확인</span></div>
+      </div>
+      <div class="card">
+        <h3>S12 · 요청 폭주 <span class="cid">가용성</span></h3>
+        <div class="kv"><span>탐지 요청 수</span><span>판정 헬스체크</span></div>
+        <p>출발지 폭주 2만여 건을 탐지해 n8n이 서비스 헬스체크로 판정. 안전 상한(≤100 req/s)에서 포털이 저하되지 않아 <b>정상 트래픽 오차단 0</b>으로 무조치.</p>
+        <div class="kv"><span>20,781 req</span><span>p95 555ms</span><span class="pill warn">no_action(정상)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+    <h2><span class="n">03</span> 실측 결과</h2>
+    <p class="sub">2026-11-16, 이 PC에서 직접 측정. 팀 시절(4대 분산) 수치와 구분한 본인 실측값입니다.</p>
+    <table>
+      <thead><tr><th>케이스</th><th>자동 대응</th><th>효과 확인</th><th>원복</th><th>티켓</th></tr></thead>
+      <tbody class="mono">
+        <tr><td>S1 무차별 대입</td><td>IP 차단 (49s)</td><td>.11 403 / .100 200</td><td>해제·재접근 200</td><td>T-0001 closed</td></tr>
+        <tr><td>S4 실패 뒤 성공</td><td>잠금·세션 회수</td><td>세션 무효·오잠금 0</td><td>비밀번호 재설정</td><td>T-0002 closed</td></tr>
+        <tr><td>S8 스캔→로그인</td><td>앱 IP 차단</td><td>.21 403 / .100 200</td><td>해제·재접근 200</td><td>T-0003 closed</td></tr>
+        <tr><td>S10 3계층</td><td>앱 + pfSense 차단</td><td>앱 403 / PF 적용</td><td>경계→앱 순차 해제</td><td>T-0004 closed</td></tr>
+        <tr><td>S7 변조</td><td>Wazuh AR 복구·격리</td><td>해시=기준본 verify ok</td><td>복구 자체가 원복</td><td>T-0005 verified</td></tr>
+        <tr><td>S12 폭주</td><td>헬스체크 판정</td><td>/health 62~1392ms</td><td>no_action(미저하)</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:18px"><b>정직한 한계.</b> S10의 pfSense 경계 차단은 HTTP 새 연결을 드롭하지 못해 앱 레이어(403)에서 막혔습니다(팀도 미해결). S12는 안전 상한을 넘는 실제 DoS를 돌리지 않아 무조치가 정상 결과입니다. S7 티켓은 복구·검증 완료 뒤 저장소 닫기 모델 차이로 verified에서 멈춥니다. 모든 수치는 표본·시작/끝점과 함께 저장소 일지에 기록했습니다.</div>
+  </div>
+</section>
+
+<section id="highlight">
+  <div class="wrap">
+    <h2><span class="n">04</span> 핵심 엔지니어링</h2>
+    <div class="grid">
+      <div class="card"><h3>S7 Wazuh 자동 복구 설치</h3><p>팀이 못 끝낸 FIM 자동 복구를 완성. 에이전트에 복구 스크립트·기준본 해시 설치, 매니저에 active-response 등록(4.9에서 거부되는 <span class="mono">location: specific</span> → <span class="mono">local</span> 수정, 마운트 설정에 영구 반영). 변조 복구·새 파일 격리 양방향 검증.</p></div>
+      <div class="card"><h3>자기 차단 방지·중복 방지</h3><p>대응 호출자·관리망·정상 대역은 차단 대상에서 제외. 모든 조치에 멱등 키(<span class="mono">{ticket}-{bot}-{target}-{action}</span>)를 붙여 재전송·동시 실행에도 한 번만 적용.</p></div>
+      <div class="card"><h3>출발지 보존 설계</h3><p>pfSense NAT·VPN 구간에서 출발지 IP를 바꾸지 않아, 차단(112)이 실제 공격 IP를 정확히 막음. 전달 헤더를 신뢰하지 않고 연결 주소로 통일.</p></div>
+      <div class="card"><h3>사람 승인 원복</h3><p>차단·잠금은 자동, 해제·복구 확정은 사람이 대시보드에서 승인. 같은 IP를 다른 자리가 막고 있으면 해제를 보류하고 사유를 티켓에 남김.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="wrap">
+    <h2><span class="n">05</span> 기술 스택</h2>
+    <p class="sub">모두 호환성·자원 시험 후 버전 고정.</p>
+    <div class="stack">
+      <span class="chip">pfSense CE 2.7.2</span>
+      <span class="chip">Suricata</span>
+      <span class="chip">Wazuh 4.9</span>
+      <span class="chip">Graylog 6.1.16</span>
+      <span class="chip">OpenSearch 2.5</span>
+      <span class="chip">n8n 2.39.5</span>
+      <span class="chip">Flask + Waitress</span>
+      <span class="chip">React 19 · Vite</span>
+      <span class="chip">MySQL 8.4</span>
+      <span class="chip">OpenVPN</span>
+      <span class="chip">Docker</span>
+      <span class="chip">Kali Linux</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <div class="brand"><div class="logo">H</div> HAEDAM SOAR</div>
+      <div style="margin-top:8px">1조 NoBugs 팀 캡스톤의 개인 재구성 · C 자리(Wazuh·S7·티켓)</div>
+      <div style="margin-top:4px;color:var(--dim)">팀 원본과 본인 실측을 구분해 표기. 교육용 가상 기관입니다.</div>
+    </div>
+    <a class="btn" href="https://github.com/shk12170-dev/haedam-soar-portfolio" target="_blank" rel="noopener">github.com/shk12170-dev/haedam-soar-portfolio</a>
+  </div>
+</footer>
+</body>
+</html>
