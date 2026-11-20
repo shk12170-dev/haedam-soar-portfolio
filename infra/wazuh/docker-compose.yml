@@ -2,7 +2,8 @@
 # 팀은 C PC에서 수업 compose(Wazuh 4.9.0)를 썼다. 이 파일은 원본에서 다음만 바꿨다:
 #  - 포트를 BIND_IP(기본 127.0.0.1)에만 게시, 514/udp 제거(Graylog와 겹침), 9200 비게시
 #  - 대시보드 443 -> 127.0.0.1:5601, 메모리 상한·indexer heap 768m(한 PC 15.3GB 예산), TZ
-#  - 내부 계정(admin/kibanaserver)·API 계정은 원본 기본값 유지. 외부에 게시하지 않는다(README 한계 참고)
+#  - wazuh.yml 파일 마운트 제거: 대시보드 이미지가 WAZUH_API_URL·API_USERNAME·API_PASSWORD로 직접 만든다
+#  - 내부 계정·API 비밀번호는 파일에 적지 않고 .env(WAZUH_*_PASSWORD)에서 읽는다(.env.example 참고). 포트는 외부에 게시하지 않는다
 name: haedam-wazuh
 
 # Wazuh App Copyright (C) 2017, Wazuh Inc. (License GPLv2)
@@ -28,13 +29,13 @@ services:
       - TZ=Asia/Seoul
       - INDEXER_URL=https://wazuh.indexer:9200
       - INDEXER_USERNAME=admin
-      - INDEXER_PASSWORD=SecretPassword
+      - INDEXER_PASSWORD=${WAZUH_INDEXER_PASSWORD:?infra/wazuh/.env에 WAZUH_INDEXER_PASSWORD 필요}
       - FILEBEAT_SSL_VERIFICATION_MODE=full
       - SSL_CERTIFICATE_AUTHORITIES=/etc/ssl/root-ca.pem
       - SSL_CERTIFICATE=/etc/ssl/filebeat.pem
       - SSL_KEY=/etc/ssl/filebeat.key
       - API_USERNAME=wazuh-wui
-      - API_PASSWORD=MyS3cr37P450r.*-
+      - API_PASSWORD=${WAZUH_API_PASSWORD:?infra/wazuh/.env에 WAZUH_API_PASSWORD 필요}
     volumes:
       - wazuh_api_configuration:/var/ossec/api/configuration
       - wazuh_etc:/var/ossec/etc
@@ -85,18 +86,17 @@ services:
       - "127.0.0.1:5601:5601"
     environment:
       - INDEXER_USERNAME=admin
-      - INDEXER_PASSWORD=SecretPassword
+      - INDEXER_PASSWORD=${WAZUH_INDEXER_PASSWORD:?infra/wazuh/.env에 WAZUH_INDEXER_PASSWORD 필요}
       - WAZUH_API_URL=https://wazuh.manager
       - DASHBOARD_USERNAME=kibanaserver
-      - DASHBOARD_PASSWORD=kibanaserver
+      - DASHBOARD_PASSWORD=${WAZUH_DASHBOARD_PASSWORD:?infra/wazuh/.env에 WAZUH_DASHBOARD_PASSWORD 필요}
       - API_USERNAME=wazuh-wui
-      - API_PASSWORD=MyS3cr37P450r.*-
+      - API_PASSWORD=${WAZUH_API_PASSWORD:?infra/wazuh/.env에 WAZUH_API_PASSWORD 필요}
     volumes:
       - ./config/wazuh_indexer_ssl_certs/wazuh.dashboard.pem:/usr/share/wazuh-dashboard/certs/wazuh-dashboard.pem
       - ./config/wazuh_indexer_ssl_certs/wazuh.dashboard-key.pem:/usr/share/wazuh-dashboard/certs/wazuh-dashboard-key.pem
       - ./config/wazuh_indexer_ssl_certs/root-ca.pem:/usr/share/wazuh-dashboard/certs/root-ca.pem
       - ./config/wazuh_dashboard/opensearch_dashboards.yml:/usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
-      - ./config/wazuh_dashboard/wazuh.yml:/usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml
       - wazuh-dashboard-config:/usr/share/wazuh-dashboard/data/wazuh/config
       - wazuh-dashboard-custom:/usr/share/wazuh-dashboard/plugins/wazuh/public/assets/custom
     depends_on:
