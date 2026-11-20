@@ -132,6 +132,8 @@ Graylog(D)·티켓 저장소·Wazuh(C)는 팀처럼 **VPN 주소(10.250.0.100 / 
 
 끌 때는 반대 순서(포털·DB → Docker → OpenVPN → pfSense)입니다.
 
+켠 뒤에는 `powershell -ExecutionPolicy Bypass -File tools\windows\lab-startup-check.ps1`로 한 번에 점검합니다(pfSense 시계, VPN 주소, 컨테이너, 서비스 응답, 포털 GELF 적체, Wazuh 에이전트 ID). 기본은 점검만 하고, `-FixClock`·`-StartContainers`·`-RestartPortal`을 줄 때만 고칩니다.
+
 ## 구성별 확인
 
 | 구성 | 실행 | 접속 | 기본 설정 |

@@ -35,7 +35,7 @@ $env:BIND_IP = "<team-d 주소>"; docker compose -f infra/n8n/docker-compose.yml
 - 효과(`effect`)는 도구가 `null`로 둔다. `.22` 접근 실패·정상 출발지 200 확인은 이 워크플로가 하지 않는다.
 
 **haedam-15 (Wazuh active response, 근거: C의 `lab/s7/restore/README.md`)**
-- `POST /security/user/authenticate?raw=true`로 토큰을 받고 `PUT /active-response?agents_list=010`에 `{command:"!s7-restore-ar", arguments:[file_key, run_id]}`를 보낸다(10/28 C의 API 직접 호출과 같은 형식). `file_key`는 웹 루트 기준 경로다. 토큰을 만들고 쓰는 호출은 하위 워크플로 `haedam-17`(실행 기록 저장 안 함)에만 있고, `haedam-15`는 입력 검사·dry_run·응답 해석을 맡으며 **실행 기록을 저장한다**(노드별 증적). 11/03 변경 전에는 `haedam-15` 전체가 실행 기록을 저장하지 않았다.
+- `POST /security/user/authenticate?raw=true`로 토큰을 받고 `PUT /active-response?agents_list=001`에 `{command:"!s7-restore-ar", arguments:[file_key, run_id]}`를 보낸다(10/28 C의 API 직접 호출과 같은 형식). `file_key`는 웹 루트 기준 경로다. 토큰을 만들고 쓰는 호출은 하위 워크플로 `haedam-17`(실행 기록 저장 안 함)에만 있고, `haedam-15`는 입력 검사·dry_run·응답 해석을 맡으며 **실행 기록을 저장한다**(노드별 증적). 11/03 변경 전에는 `haedam-15` 전체가 실행 기록을 저장하지 않았다.
 - `file_key`는 웹 루트(`/home/haedam/haedam-portal-frontend/dist`) 아래 상대 경로로 보고, `..`·공백·루트 밖 경로는 거부한다.
 - Wazuh API 응답은 "에이전트에 보냈다"까지만 알려 준다. 그래서 성공하면 `applied`이되 `applied_verified:null`로 두고, 복구가 실제로 됐는지(`sha256_after`가 기준 해시와 같은지)는 따로 확인해야 한다 — 아직 없다.
 - 필요한 것: n8n 자격 증명 `Basic Auth`(이제 `haedam-17`의 "Wazuh 로그인" 노드에 연결)(계정 `n8n-s7`, C가 만든 것). 값은 읽지 않았다. TLS는 자체 서명이라 인증서 검증을 끈 상태(`allowUnauthorizedCerts`)다 — 팀 VPN 안이라는 전제이며 C와 정리가 필요하다.

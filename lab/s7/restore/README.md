@@ -62,7 +62,7 @@ Wazuh는 agent의 `/var/ossec/active-response/bin/` 안 실행 파일만 부를 
 | 구분 | 내용 |
 | --- | --- |
 | VM 설치 | `/var/ossec/active-response/bin/s7-restore-ar`, `root:wazuh`, `0750` |
-| 호출(n8n → Wazuh API) | `PUT /active-response?agents_list=010`, 본문 `{"command": "!s7-restore-ar", "arguments": ["<경로>", "<run_id>"]}` |
+| 호출(n8n → Wazuh API) | `PUT /active-response?agents_list=001`, 본문 `{"command": "!s7-restore-ar", "arguments": ["<경로>", "<run_id>"]}` |
 | 경로 | 웹 루트 기준 상대 경로 또는 절대 경로. `arguments`가 없으면 `alert.syscheck.path` → `alert.data.syscheck.path` 순서로 찾음 |
 | run_id | 영문·숫자·`.`·`_`·`-`, 1~64자. 격리 폴더 이름에 들어가므로 `/`는 거부 |
 | manager 설정 | **바꾸지 않음.** `!`로 시작하는 명령은 manager 명령 목록(`ar.conf`)을 거치지 않고 agent 스크립트 이름으로 바로 전달됨(manager 4.9.0 API 코드 `validate_command`에서 확인). `<active-response>` 블록을 넣지 않으므로 FIM 경보마다 자동으로 실행되지 않음 |

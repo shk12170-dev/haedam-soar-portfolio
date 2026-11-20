@@ -1,4 +1,5 @@
 """tools/secret_scan.py 동작 시험."""
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -15,6 +16,8 @@ def run_scan(tmp_path: Path, name: str, text: str) -> subprocess.CompletedProces
         capture_output=True,
         text=True,
         encoding="utf-8",
+        # 한국어 Windows(cp949)에서 자식 프로세스 출력이 UTF-8로 읽히도록 고정
+        env={**os.environ, "PYTHONIOENCODING": "utf-8"},
     )
 
 
