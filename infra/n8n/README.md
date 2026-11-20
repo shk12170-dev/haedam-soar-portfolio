@@ -16,6 +16,8 @@ docker compose -f infra/n8n/docker-compose.yml up -d
 $env:BIND_IP = "<team-d 주소>"; docker compose -f infra/n8n/docker-compose.yml up -d
 ```
 
+**최초 1회 소유자 계정:** n8n 2.39.5는 UI 접속 전에 소유자 계정 설정이 필수다(이전의 `N8N_USER_MANAGEMENT_DISABLED`는 이 버전에서 폐기됨). 새 PC에서는 `http://127.0.0.1:5678` 접속 → "Set up owner account"에서 로컬 계정(예: 이메일 `admin@haedam.local`, 비밀번호는 각자 설정)을 만든다. 이 비밀번호는 로컬 전용이라 저장소에 커밋하지 않는다. 워크플로·자격 증명은 볼륨(`n8n_data`)에 남아 있어 계정 설정과 무관하게 유지된다.
+
 ## 10/22 적용 결과 (D PC에서 실제 확인)
 
 - 적용 전: 컨테이너 `n8n`, 5678이 `0.0.0.0`과 `[::]`에 게시. 워크플로 11개(활성 6개: 4·5·6·7·8번 봇, 9-S11), 수업 용도.
