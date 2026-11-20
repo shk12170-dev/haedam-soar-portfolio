@@ -183,3 +183,4 @@ Graylog(D)·티켓 저장소·Wazuh(C)는 팀처럼 **VPN 주소(10.250.0.100 / 
 | `tools/` | 민감정보 검사, 입력 도구, Windows 방화벽 스크립트 |
 | `docs/journal/` | 날짜별 작업 일지(문제 → 원인 → 조치) |
 | `docs/RETROSPECTIVE.md` | 개선점과 느낀 점(문제 → 원인 → 해결 → 결과) |
+| `docs/HANDOFF.md` | 서버 PC에서 이어서 할 작업(인수인계) |
