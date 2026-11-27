@@ -1,5 +1,4 @@
-Kali 터미널에 아래를 한 줄씩 붙여 넣고 Enter. 긴 줄이 잘리면 안 되니 한 번에 한 줄씩. sudo 비밀번호는 kali.
-
+Kali 터미널에 아래를 한 줄씩 붙여 넣고 Enter. 긴 줄이 잘리면 안 되니 한 번에 한 줄씩.
 1) 기본 주소 + 게이트웨이
 sudo nmcli con add type ethernet ifname eth0 con-name haedam-wan ipv4.method manual ipv4.addresses 203.0.113.10/24 ipv4.gateway 203.0.113.1
 
