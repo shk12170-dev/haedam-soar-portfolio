@@ -1,0 +1,15 @@
+Kali 터미널에 아래를 한 줄씩 붙여 넣고 Enter. 긴 줄이 잘리면 안 되니 한 번에 한 줄씩. sudo 비밀번호는 kali.
+
+1) 기본 주소 + 게이트웨이
+sudo nmcli con add type ethernet ifname eth0 con-name haedam-wan ipv4.method manual ipv4.addresses 203.0.113.10/24 ipv4.gateway 203.0.113.1
+
+2) 연결 올리기
+sudo nmcli con up haedam-wan
+
+3) 실습용 SSH 키 넣기
+mkdir -p ~/.ssh && echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJBwTqVPKCImSKxt9Yw+ZzoTjtjkguq7Koafvmkmq3w1 haedam-lab-admin" >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys
+
+4) SSH 켜기(비밀번호 로그인 끔)
+sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config && sudo systemctl enable --now ssh
+
+끝나면 Claude가 pfSense를 거쳐 203.0.113.10으로 SSH 접속해서 나머지 공격 출발지 주소(.11 .12 .21 .22 .41 .100)를 채웁니다.
